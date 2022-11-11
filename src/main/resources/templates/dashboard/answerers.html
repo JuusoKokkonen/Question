@@ -1,0 +1,38 @@
+<th:block th:insert="fragments/header" />
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h1 class="pageTitle">Answerers</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <th:block th:if="${answerers.size() > 0}"> 
+                <table class="striped highlight">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Answerer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="answerer,iter : ${answerers}">
+                            <td th:text="${iter.index}"></td>
+                            <td>
+                                <form action="#" th:action="@{/answerers}" method="POST">
+                                    <input type="hidden" name="id" th:value="${answerer.id}">
+                                    <input type="hidden" name="uuid" th:value="${answerer.uuid}">
+                                    <button type="submit" class="waves-effect waves-teal btn-link" th:text="${answerer.uuid}"></button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </th:block>
+            <th:block th:unless="${answerers.size() > 0}">
+                <p>Questions do not have any answers</p>
+            </th:block>
+        </div>
+    </div>
+</div>
+<th:block th:insert="fragments/footer" />

@@ -1,0 +1,97 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+nav {
+    margin-bottom: 16px
+}
+
+.tabBadge.badge {
+    line-height: inherit;
+    float: initial;
+    background-color: #26a69a;
+    padding: 2px 12px 4px 12px;
+    border-radius: 6px;
+    color: #ffffff;
+    font-weight: bold
+}
+
+.buttonColumn a, 
+.buttonColumn button {
+    margin: 5px 0
+}
+
+.statisticCircle {
+    border: 10px solid #eee;
+    height: 160px;
+    width: 160px;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    margin: 0 auto
+}
+
+.questionTable {
+    -webkit-transition: all 300ms ease-in-out;
+    -moz-transition: all 300ms ease-in-out;
+    -ms-transition: all 300ms ease-in-out;
+    -o-transition: all 300ms ease-in-out;
+    transition: all 300ms ease-in-out
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+.right-6 {
+    margin-right: 6px !important
+}
+
+.btn-link {
+    border: 0;
+    padding: 0;
+    background-color: transparent;
+    color: blue
+}
+
+.listOfChoices span::after {
+    content: ', ';
+}
+
+.listOfChoices span:last-of-type::after {
+    content: ''
+}
+
+.container {
+    flex: 1 0 auto;
+    padding-bottom: 24px
+}
+
+.table-fixed {
+    table-layout: fixed
+}
+
+.loginForm {
+    background-color: #ffffff;
+    border: 1px solid #eeeeee;
+    padding: 15px
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 992px) {
+    .pageTitle {
+        font-size: 3.2rem
+    }
+}
+
+@media (max-width: 600px) {
+    .pageTitle {
+        font-size: 2.2rem
+    }
+}

@@ -1,0 +1,107 @@
+FORMAT: 1A
+HOST: https://question-aika.herokuapp.com/api/
+
+# Question App API
+
+Polls is a simple API allowing consumers to view polls and answer in them.
+
+## Questions Collection [/questions]
+    
+### Get Questions [GET]
+
+Get list of questions
+
++ Response 200 (application/json)
+
+    + Body
+    
+            {
+                "questions": [
+                    {
+                      "id": 7,
+                      "question": "Nostatko opintolainaa?",
+                      "orderNumber": 7,
+                      "type": "SELECT_ONE",
+                      "choices": [
+                        {
+                          "id": 18,
+                          "choice": "Kyllä",
+                          "orderNumber": 1
+                        },
+                        {
+                          "id": 19,
+                          "choice": "En",
+                          "orderNumber": 2
+                        }
+                      ]
+                    },
+                ]
+            }
+
++ Response 404 (application/json)
+
+### Submit Answers [POST]
+
+Submit answers
+
++ Request (application/json)
+  
+    + Body
+    
+            [
+                {
+                    "questionId": 11,
+                    "choices": [1]
+                }, {
+                    "questionId": 12,
+                    "choices": [1, 2, 3]
+                }, {
+                    "questionId": 13,
+                    "freeText": "This was a freetext field answer"
+                }
+            ]
+  
++ Response 200 (application/json)
+
+    + Body
+
+            { "status": true }
+        
++ Response 404 (application/json)
+
+    + Body
+    
+            { "status": false }
+
+## Question Collection [/questions/{question_id}]
+
++ Parameters
+    + question_id: `1` (number, required) - Id of the question
+
+### Get Question [GET]
+
+Get an individual question by question id
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + status: true (boolean) - Tells you if request was successful
+        + question
+            + id: 1 (number) - ID of the question
+            + question: "How was your day?" (string) - Question
+
+    + Body
+    
+            {
+                "status": true,
+                "question": {
+                    "id": 1,
+                    "question": "What is the point of life?"
+                }
+            }
+            
++ Response 404 (application/json)
+    
+    + Body
+    
+            { "status": false }

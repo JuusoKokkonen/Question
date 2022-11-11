@@ -1,0 +1,40 @@
+<th:block th:insert="fragments/header" />
+<div class="container" style="max-width: 500px">
+    <div class="row">
+        <form class="col s12" action="#" th:action="@{/login}" style="padding: 32px 48px 0px 48px" method="POST">
+            <div class="row">
+                <div class="col s12">
+                    <h1>Login</h1>
+                    <div th:if="${param.logout}" class="alert alert-success"> 
+                        <h5>You have been logged out.</h5>
+                    </div>
+                    <div th:if="${param.error}" class="alert alert-error">    
+                        <h5>Invalid username and password.</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row z-depth-1 grey lighten-4" style="padding: 32px 48px 30px 48px">
+                <div class="col s12">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="username" name="username" type="text" class="validate">
+                            <label for="username">Username</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="password" name="password" type="password" class="validate">
+                            <label for="password">Password</label>
+                        </div>
+                    </div>
+                    <div class='row'>
+                        <div class="col s12">
+                            <button type='submit' class='col s12 btn btn-large waves-effect'>Login</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block th:insert="fragments/footer" />

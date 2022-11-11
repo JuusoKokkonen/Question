@@ -1,0 +1,23 @@
+<th:block th:insert="fragments/header" />
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <h1 class="center-align pageTitle">Statistics</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12 m4 center-align">
+            <h1 class="circle statisticCircle" th:text="${questionCount}"/>
+            <h4>Questions</h4>
+        </div>
+        <div class="col s12 m4 center-align">
+            <h1 class="circle statisticCircle" th:text="${answerCount}"/>
+            <h4>Answers</h4>
+        </div>
+        <div class="col s12 m4 center-align">
+            <h1 class="circle statisticCircle" th:text="${answererCount}"/>
+            <h4>Answerers</h4>
+        </div>
+    </div>
+</div>
+<th:block th:insert="fragments/footer" />

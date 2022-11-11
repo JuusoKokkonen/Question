@@ -1,0 +1,43 @@
+<th:block th:insert="fragments/header" />
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <a class="waves-effect waves-light btn-small" th:href="@{/answerers}"><i class="material-icons left">arrow_back</i>Return to Answerers</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <h1 class="pageTitle">Answers</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <table class="striped highlight table-fixed">
+                <thead>
+                    <tr>
+                        <th>Question</th>
+                        <th>Question Type</th>
+                        <th>Answer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="answer : ${answers}">
+                        <td><a th:href="@{/questions/{id}?fromAction=viewAnswers&fromKey={uuidId}(id=${answer.question.id},uuidId=${uuidId})}" th:text="${answer.question.question}"></td>
+                        <td th:text="${answer.question.getQuestionTypeDescription(answer.question.type)}"/>
+                        <th:block th:if="${answer.choices.size() > 0}">
+                            <td class="listOfChoices">
+                                <th:block th:each="choice : ${answer.choices}">
+                                    <span th:text="${choice.choice}" />
+                                </th:block>
+                            </td>
+                        </th:block>
+                        <th:block th:unless="${answer.choices.size() > 0}">
+                            <td th:text="${answer.freeText}" />
+                        </th:block>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:insert="fragments/footer" />

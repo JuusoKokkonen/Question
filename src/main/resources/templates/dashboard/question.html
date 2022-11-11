@@ -1,0 +1,248 @@
+<th:block th:insert="fragments/header" />
+<div class="container">
+    <div class="row">
+        <div class="col s12">
+            <th:block th:if="${fromAction != null && fromKey != null}">
+                <form action="#" th:action="@{/answerers}" method="POST" th:object="${answerer}">
+                    <input type="hidden" name="id" th:value="*{id}">
+                    <input type="hidden" name="uuid" th:value="*{uuid}">
+                    <button type="submit" class="waves-effect waves-light btn-small"><i class="material-icons left">arrow_back</i>Return to User's Answers</button>
+                </form>
+            </th:block>
+            <th:block th:unless="${fromAction != null && fromKey != null}">
+                <a class="waves-effect waves-light btn-small" th:href="@{/questions}"><i class="material-icons left">arrow_back</i>Return to Questions</a>
+            </th:block>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <h1  class="pageTitle">Showing Question: <small th:text="${question.question}"/></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s3"><a class="active" href="#answers">Answers <span th:text="${question.answers.size()}" class="tabBadge badge" /></a></li>
+                <li th:if="${choiceable}" class="tab col s3"><a href="#choices">Choices <span id="choiceBadge" th:text="${question.choices.size()}" class="tabBadge badge" /></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div id="answers" class="col s12">
+            <div class="row">
+                <div class="col s12">
+                    <th:block th:if="${question.answers.size() > 0}">
+                        <th:block th:if="${choiceable}">
+                            <table class="responsive-table striped highlight">
+                                <thead>
+                                    <tr>
+                                        <th>Choice</th>
+                                        <th>Number of Answers</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="choice,iter : ${question.choices}">
+                                        <td th:text="${choice.choice}" />
+                                        <td th:text="${choice.answers.size()}" />
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </th:block>
+                        <th:block th:unless="${choiceable}">
+                            <table class="responsive-table striped highlight">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Answer</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="answer,iter : ${question.answers}">
+                                        <td th:text="${iter.index}" />
+                                        <td th:text="${answer.freeText}" />
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </th:block>
+                    </th:block>
+                    <th:block th:unless="${question.answers.size() > 0}">
+                        <p>This question doesn't have any answers</p>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <div th:if="${choiceable}" id="choices" class="col s12">
+            <div class="row">
+                <div class="col s12 buttonColumn">
+                    <th:block th:if="${deletableChoices}">
+                        <button id="createNewChoiceBtn" class="waves-effect waves-light btn right-6"><i class="left material-icons">add_circle_outline</i> Add New Choice</a>
+                    </th:block>
+                    <button id="changeChoiceOrderBtn" class="waves-effect waves-light btn blue" data-state=false>Change Order</button>
+                    <button id="acceptChoiceOrderChangesBtn" class="waves-effect waves-light btn green" style="display: none"><i class="left material-icons">check</i> Accept Changes</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12">
+                    <table class="choiceTable striped highlight">
+                        <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Choice</th>
+                                <th:block th:if="${deletableChoices}">
+                                    <th class="center-align"><i class="tiny material-icons">settings</i></th>
+                                </th:block>
+                            </tr>
+                        </thead>
+                        <tbody>              
+                            <tr th:each="choice : ${question.choices}" th:attr="data-choice_id=${choice.id}">
+                                <td th:text="${choice.orderNumber}"/>
+                                <td th:text="${choice.choice}" />
+                                <th:block th:if="${deletableChoices}">
+                                    <td class="center-align">
+                                        <a th:href="@{/choice/delete/{id}(id=${choice.id})}" onclick="return confirm('Are you sure you want to remote particular choice?')"><i class="material-icons">delete_forever</i></a>
+                                    </td>
+                                </th:block>
+                            </tr>  
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/html5sortable.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        let questionId = /*[[${question.id}]]*/ 'default';
+    /*]]>*/
+</script>
+<script>
+    let $choiceTable = $("table.choiceTable"),
+        $choiceBadge = $('#choiceBadge'),
+        choiceOrders = [];
+    $(function() {
+        let $changeOrderBtn = $('#changeChoiceOrderBtn'),
+            $acceptBtn = $('#acceptChoiceOrderChangesBtn'),
+            $createNewChoiceBtn = $('#createNewChoiceBtn');        
+        $('.tabs').tabs();
+        initSortable();
+        $changeOrderBtn.on('click', function() {
+            let state = $(this).data('state');
+            manageAnchorTags(state);
+            choiceOrders = [];
+            $(this).data('state', !state).text(state ? 'Change Order' : 'Cancel').toggleClass(!state ? 'red blue' : 'blue red');
+            !state ? $acceptBtn.show() : $acceptBtn.hide(); 
+            !state ? $createNewChoiceBtn.hide() : $createNewChoiceBtn.show();
+            sortable('.choiceTable tbody', state ? 'disable' : 'enable'); 
+        });
+        $acceptBtn.on('click', function() {
+            if(choiceOrders.length){
+                $changeOrderBtn.hide();
+                $choiceTable.css('opacity', '0.4');
+                $acceptBtn.prop('disabled', true).find('i').addClass('spin').text('cached');
+                let promise = changeChoiceOrder(choiceOrders);
+                promise.done(function(response) {
+                    setTimeout(function(){
+                        $acceptBtn.find('i').removeClass('spin').text('remove_circle_outline');
+                        $changeOrderBtn.trigger('click').show();
+                        $acceptBtn.prop('disabled', false).hide();
+                        $choiceTable.css('opacity', '1');
+                    }, 1000);
+                });
+            }
+        });
+        $createNewChoiceBtn.on('click', function() {
+            $changeOrderBtn.hide();
+            $choiceTable.append(
+                $('<tr />').append(
+                    $('<td />').text($choiceTable.find('tbody tr').length + 1),
+                    $('<td />').append(
+                        $('<input />').attr({
+                            type: 'text',
+                            placeholder: 'Enter choice'
+                        })
+                    ),
+                    $('<td />').addClass('center-align').append(
+                        $('<button />').addClass('btn green addChoiceBtn right-6').append(
+                            $('<i />').addClass('left material-icons').text('add_circle_outline'),
+                            ' Add'
+                        ),
+                        $('<button />').attr('onclick', '$(this).closest("tr").remove(); $("#changeChoiceOrderBtn").show();').addClass('btn red').append(
+                            $('<i />').addClass('left material-icons').text('remove_circle_outline'),
+                            ' Delete'
+                        )
+                    )
+                )
+            )
+        });
+        $(document).on('click', '.addChoiceBtn', function() {
+            let $tr = $(this).closest('tr'),
+                promise = createChoice({
+                    questionId: questionId,
+                    choice: $tr.find('input').val()
+                });
+            promise.done(function(response){
+                $changeOrderBtn.show();
+                if(response != null) {
+                    incrementBadgeNumber($choiceBadge);
+                    $tr.empty().attr('data-choice_id', response.id).append(
+                        $('<td />').text(response.orderNumber),
+                        $('<td />').text(response.choice),
+                        $('<td />').addClass('center-align').append(
+                            $('<a />').attr({
+                                href: '/choice/delete/' + response.id,
+                                onclick: "return confirm('Are you sure you want to remote particular choice?')"
+                            }).append(
+                                $('<i />').addClass('material-icons').text('delete_forever')
+                            )
+                        )
+                    )
+                }
+            });
+        });
+    });
+    function initSortable() {
+        if($choiceTable.length != 0){
+            sortable('.choiceTable tbody', {
+                items: 'tr'
+            });
+            sortable('.choiceTable tbody')[0].addEventListener('sortupdate', function(e) {
+                choiceOrders = getChoiceOrdering();
+                updateOrderNumbersInView($choiceTable);
+            });
+            sortable('.choiceTable tbody', 'disable');
+        }
+    }
+    function createChoice(choice) {
+        return $.ajax({
+            type: 'POST',
+            url: '/createChoice',
+            contentType: 'application/json',
+            data: JSON.stringify(choice) 
+        });
+    }
+    function manageAnchorTags(state) {
+        $choiceTable.find('tr').each(function(i, tr) {
+            $(tr).children('td').find('a').css('pointer-events', state ? 'all' : 'none');
+        });
+    }
+    function getChoiceOrdering() {
+        let items = [];
+        $choiceTable.find('tbody tr').each(function(i,e) {
+            items.push({
+                objectId: parseInt($(e).data('choice_id')),
+                updatedOrderNumber: i + 1,
+            });
+        });
+        return items;
+    }
+    function changeChoiceOrder(updatedOrders) {
+        return $.ajax({
+            type: 'POST',
+            url: '/changeChoiceOrders',
+            contentType: 'application/json',
+            data: JSON.stringify(updatedOrders)
+        });
+    }
+</script>
+<th:block th:insert="fragments/footer" />

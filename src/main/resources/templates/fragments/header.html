@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:insert="fragments/head" />
+<body>
+    <th:block sec:authorize="isAuthenticated()">
+        <nav>
+            <div class="nav-wrapper">
+                <a href="/" class="brand-logo" style="padding-left: 10px">Dashboard</a>
+                <a href="#" data-target="mobileNav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li th:classappend="${#httpServletRequest.getRequestURI() == '/questions' ? 'active' : ''}"><a th:href="@{/questions}">Questions</a></li>
+                    <li th:classappend="${#httpServletRequest.getRequestURI() == '/statistics' ? 'active' : ''}"><a th:href="@{/statistics}">Statistics</a></li>
+                    <li th:classappend="${#httpServletRequest.getRequestURI() == '/answerers' ? 'active' : ''}"><a th:href="@{/answerers}">Answerers</a></li>
+                    <li><a class="waves-effect waves-light btn" th:href="@{/logout}">Logout <i class="material-icons right">power_settings_new</i></a></li>
+                </ul>
+            </div>
+        </nav> 
+        <ul class="sidenav" id="mobileNav">
+            <li th:classappend="${#httpServletRequest.getRequestURI() == '/questions' ? 'active' : ''}"><a th:href="@{/questions}">Questions</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI() == '/statistics' ? 'active' : ''}"><a th:href="@{/statistics}">Statistics</a></li>
+            <li th:classappend="${#httpServletRequest.getRequestURI() == '/answerers' ? 'active' : ''}"><a th:href="@{/answerers}">Answerers</a></li>
+            <li><a th:href="@{/logout}">Logout <i class="material-icons right">power_settings_new</i></a></li>
+        </ul>
+    </th:block>
